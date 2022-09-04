@@ -26,6 +26,8 @@ import java.nio.ByteBuffer;
 import org.jnode.driver.block.BlockDeviceAPI;
 import org.jnode.fs.FSFile;
 import org.jnode.fs.ReadOnlyFileSystemException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A File instance is the in-memory representation of a single file (chain of
@@ -34,6 +36,7 @@ import org.jnode.fs.ReadOnlyFileSystemException;
  * @author epr
  */
 public class FatFile extends FatObject implements FSFile {
+    private static final Logger log = LoggerFactory.getLogger(FatFile.class);
     private long startCluster;
     private long length;
     private FatDirectory dir;
@@ -49,9 +52,11 @@ public class FatFile extends FatObject implements FSFile {
         this.length = length;
         this.clusterSize = fs.getClusterSize();
         this.isDir = isDir;
+        log.info("clusters " + startCluster + " - " + fs.getClusterSize());
     }
 
     public synchronized void read(long fileOffset, ByteBuffer destBuf) throws IOException {
+        log.info("FOO read entry");
         int len = destBuf.remaining();
 
         final long max = (isDir) ? getLengthOnDisk() : getLength();
@@ -60,8 +65,18 @@ public class FatFile extends FatObject implements FSFile {
         }
 
         final FatFileSystem fs = getFatFileSystem();
-        final long[] chain = fs.getFat().getChain(startCluster);
+        long[] chain = fs.getFat().getChain(startCluster);
         final BlockDeviceAPI api = fs.getApi();
+
+        if (chain == null) {
+            // chain is invalid (FAT corrupt)
+            log.info("FAT entry invalid for " + myEntry.getName() + ". Assuming unfragmented file and reading from directory info.");
+            int clustersRequired = (int) Math.ceil((max * 1.0 / clusterSize));
+            chain = new long[clustersRequired];
+            for (int i = 0; i < clustersRequired; i++) {
+                chain[i] = startCluster + i;
+            }
+        }
 
         int chainIdx = (int) (fileOffset / clusterSize);
         if (fileOffset % clusterSize != 0) {
@@ -73,6 +88,7 @@ public class FatFile extends FatObject implements FSFile {
             len -= size;
             chainIdx++;
         }
+
         while (len > 0) {
             int size = Math.min(clusterSize, len);
             destBuf.limit(destBuf.position() + size);
@@ -113,7 +129,7 @@ public class FatFile extends FatObject implements FSFile {
             len -= size;
             chainIdx++;
         }
-        while (len > 0) {
+        while (len > 0 && chainIdx < chain.length) {
             int size = Math.min(clusterSize, len);
             srcBuf.limit(srcBuf.position() + size);
             api.write(getDevOffset(chain[chainIdx], 0), srcBuf);
@@ -227,7 +243,8 @@ public class FatFile extends FatObject implements FSFile {
     protected long getDevOffset(long cluster, int clusterOffset) {
         final FatFileSystem fs = getFatFileSystem();
         final long filesOffset = FatUtils.getFilesOffset(fs.getBootSector());
-        return filesOffset + clusterOffset + ((cluster - FatUtils.FIRST_CLUSTER) * clusterSize);
+        long result = filesOffset + clusterOffset + ((cluster - FatUtils.FIRST_CLUSTER) * clusterSize);
+        return result;
     }
 
     /**

@@ -20,6 +20,8 @@
  
 package org.jnode.fs.fat;
 
+import org.jnode.fs.jfat.FatEntriesFactory;
+
 public enum FatType {
     FAT12(0xFFF, 1.5f), FAT16(0xFFFF, 2.0f), FAT32(0xFFFFFFFF, 4.0f);
 
@@ -42,7 +44,7 @@ public enum FatType {
     }
 
     public final boolean isEofCluster(long entry) {
-        return (entry >= eofCluster);
+        return ((entry >= eofCluster));
     }
 
     public final long getEofMarker() {

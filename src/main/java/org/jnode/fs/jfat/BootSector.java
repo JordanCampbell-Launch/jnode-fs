@@ -153,6 +153,7 @@ public class BootSector {
         DataSec = TotSec - (BPB_RsvdSecCnt + (BPB_NumFATs * FATSz) + RootDirSectors);
 
         CountOfClusters = DataSec / BPB_SecPerClus;
+        log.info("FOO DataSec "+DataSec+" / BPB_SecPerClus "+BPB_SecPerClus+"=Count of Clusters "+CountOfClusters);
 
         if (CountOfClusters < SZFAT12)
             type = IFAT12;

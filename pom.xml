@@ -52,11 +52,11 @@
     </dependencies>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outuputEncoding>UTF-8</project.reporting.outuputEncoding>
-        <slf4jVersion>1.7.32</slf4jVersion>
+        <slf4jVersion>2.0.0</slf4jVersion>
     </properties>
 
     <build>

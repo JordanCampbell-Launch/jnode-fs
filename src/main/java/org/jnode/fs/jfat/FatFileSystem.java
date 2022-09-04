@@ -43,6 +43,8 @@ public class FatFileSystem extends AbstractFileSystem<FatRootDirectory> {
         throws FileSystemException {
         super(device, readOnly, type);
 
+        log.info("FOO attempting to create jnode file system");
+
         try {
             fat = Fat.create(getApi());
         } catch (IOException ex) {
@@ -50,6 +52,8 @@ public class FatFileSystem extends AbstractFileSystem<FatRootDirectory> {
         } catch (Exception e) {
             throw new FileSystemException(e);
         }
+
+        log.info("FOO successfully created jnode file system ");
 
         cp = CodePage.forName(codePageName);
     }
@@ -108,17 +112,23 @@ public class FatFileSystem extends AbstractFileSystem<FatRootDirectory> {
 
     public long getFreeSpace() {
         // TODO implement me
-        return -1;
+        return 0;
     }
 
     public long getTotalSpace() {
         // TODO implement me
-        return -1;
+        long size = -1;
+        try {
+            size = fat.getApi().getLength();
+//        long size = fat.getBootSector().getNrFats() * fat.getClusterSize();
+        }catch (IOException ex){}
+        log.info("FOO total space == " + size);
+        return size;
     }
 
     public long getUsableSpace() {
         // TODO implement me
-        return -1;
+        return 0;
     }
 
     @Override
