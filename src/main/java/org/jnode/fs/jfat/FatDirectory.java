@@ -126,6 +126,8 @@ public class FatDirectory extends FatEntry implements FSDirectory, FSDirectoryId
         attr = new FatAttr(entry.getUInt8(11));
         boolean free = flag == FatDirEntry.FREE;
 
+        log.info("FOO entry flag" + flag);
+
         switch (flag) {
             case FatDirEntry.EOD:
                 return new FatDirEntry(getFatFileSystem(), entry, index, flag);

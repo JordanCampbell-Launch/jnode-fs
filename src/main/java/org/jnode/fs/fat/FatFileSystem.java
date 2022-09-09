@@ -29,11 +29,14 @@ import org.jnode.fs.FSEntry;
 import org.jnode.fs.FSFile;
 import org.jnode.fs.FileSystemException;
 import org.jnode.fs.spi.AbstractFileSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author epr
  */
 public class FatFileSystem extends AbstractFileSystem<FatRootEntry> {
+    private static final Logger log = LoggerFactory.getLogger(FatFileSystem.class);
     private BootSector bs;
     private Fat fat;
     private final FatDirectory rootDir;
@@ -72,7 +75,7 @@ public class FatFileSystem extends AbstractFileSystem<FatRootEntry> {
 
             for (int i = 1; i < fats.length; i++) {
                 if (!fats[0].equals(fats[i])) {
-                    System.out.println("FAT " + i + " differs from FAT 0");
+                    log.error("FAT " + i + " differs from FAT 0");
                 }
             }
             fat = fats[0];

@@ -32,11 +32,14 @@ import org.jnode.fs.spi.UnixFSAccessRights;
 import org.jnode.fs.util.DosUtils;
 import org.jnode.util.LittleEndian;
 import org.jnode.util.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author epr
  */
 public class FatDirEntry extends FatBasicDirEntry implements FSEntry, FSEntryCreated, FSEntryLastAccessed {
+    private static final Logger log = LoggerFactory.getLogger(FatFileSystem.class);
 
     /**
      * The ID for this entry.

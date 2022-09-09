@@ -26,11 +26,14 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import org.jnode.driver.block.BlockDeviceAPI;
 import org.jnode.fs.FileSystemFullException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author epr
  */
 public class Fat {
+    private static final Logger log = LoggerFactory.getLogger(Fat.class);
 
     private long[] entries;
     /** The type of FAT */
@@ -44,6 +47,8 @@ public class Fat {
 
     /** entry index for find next free entry */
     private int lastFreeCluster = 2;
+
+    public FatType getFatType() { return fatType; }
 
     /**
      * Create a new instance
@@ -197,7 +202,11 @@ public class Fat {
         while (!isEofCluster(entries[(int) cluster])) {
             count++;
             cluster = entries[(int) cluster];
-            testCluster(cluster); // prevent infinite loop in common case where it hits a 0
+            if (cluster == 0x00) {
+                log.error("File chain invalid at index" + (count-1)+". Reached unused cluster 0x00 before EOF cluster.");
+                return null;
+            }
+//            testCluster(cluster); // prevent infinite loop in common case where it hits a 0
         }
         // Now create the chain
         long[] chain = new long[count];

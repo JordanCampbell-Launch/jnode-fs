@@ -44,7 +44,7 @@ public class FatEntriesFactory implements Iterator<FatEntry> {
      */
     protected void fetchNext() {
         if (index > FatDirectory.MAXENTRIES) {
-            log.debug("Full Directory: invalid index " + index);
+            log.info("Full Directory: invalid index " + index);
         }
 
         FatDirEntry dirEntry;
@@ -60,7 +60,7 @@ public class FatEntriesFactory implements Iterator<FatEntry> {
                 entry = null;
                 return;
             } catch (IOException ex) {
-                log.debug("cannot read entry " + i);
+                log.info("cannot read entry " + i + " : " + ex.getMessage());
                 i++;
                 continue;
             }
@@ -75,7 +75,7 @@ public class FatEntriesFactory implements Iterator<FatEntry> {
             } else if (dirEntry.isLongDirEntry()) {
                 FatLongDirEntry longDirEntry = (FatLongDirEntry) dirEntry;
                 if (longDirEntry.isDamaged()) {
-                    log.debug("Damaged entry at " + (i - 1));
+                    log.info("Damaged entry at " + (i - 1));
                     record.clear();
                 } else {
                     record.add(longDirEntry);
@@ -86,18 +86,19 @@ public class FatEntriesFactory implements Iterator<FatEntry> {
                     if (directory.isRoot()) {
                         FatRootDirectory root = (FatRootDirectory) directory;
                         if (label) {
-                            log.debug("Duplicated label in root directory");
+                            log.info("Duplicated label in root directory");
                         } else {
                             root.setEntry(shortDirEntry);
                             label = true;
                         }
                     } else {
-                        log.debug("Volume label in non root directory");
+                        log.info("Volume label in non root directory");
                     }
                 } else {
                     break;
                 }
             } else if (dirEntry.isLastDirEntry()) {
+                log.info("FOO last dir entry");
                 entry = null;
                 return;
             } else {

@@ -53,6 +53,8 @@ public class FatChain {
         this.position = new ChainPosition();
         this.iterator = listIterator();
 
+        log.info("FatChain init with startEntry " + startEntry);
+
         setStartCluster(startEntry);
 
         this.dirty = false;
@@ -65,6 +67,10 @@ public class FatChain {
      */
     public void validate() {
         if ((head < 0) || (head > fat.size())) {
+//            java.lang.StackTraceElement[] e = java.lang.Thread.currentThread().getStackTrace();
+//            for (StackTraceElement ste : e) {
+//                log.info("FOO " + ste);
+//            }
             throw new IllegalStateException("illegal head: " + head);
         }
     }
@@ -78,6 +84,8 @@ public class FatChain {
     }
 
     private void setStartCluster(int value) {
+        log.info("Setting head to " + value);
+
         head = value;
 
         iterator.reset();

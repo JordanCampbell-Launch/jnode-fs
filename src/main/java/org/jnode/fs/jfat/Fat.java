@@ -189,9 +189,7 @@ public abstract class Fat {
 
     public abstract long getClusterPosition(int index);
 
-    public final int size() {
-        return (int) (bs.getCountOfClusters() + firstCluster());
-    }
+    public final int size() { return (int) (bs.getCountOfClusters() + firstCluster()); }
 
     protected abstract long offset(int index);
 

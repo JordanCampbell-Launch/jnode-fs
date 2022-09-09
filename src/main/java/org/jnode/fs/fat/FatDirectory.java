@@ -26,11 +26,14 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 import org.jnode.driver.block.BlockDeviceAPI;
 import org.jnode.fs.FSEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author epr
  */
 public class FatDirectory extends AbstractDirectory {
+    private static final Logger log = LoggerFactory.getLogger(FatDirectory.class);
 
     private boolean root = false;
     private String label;
