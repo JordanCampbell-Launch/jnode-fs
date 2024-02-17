@@ -56,7 +56,6 @@ public class FatFile extends FatObject implements FSFile {
     }
 
     public synchronized void read(long fileOffset, ByteBuffer destBuf) throws IOException {
-        log.info("FOO read entry");
         int len = destBuf.remaining();
 
         final long max = (isDir) ? getLengthOnDisk() : getLength();
