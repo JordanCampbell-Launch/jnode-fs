@@ -201,7 +201,7 @@ public class FatFile extends FatObject implements FSFile {
      * @return long
      */
     public long getLengthOnDisk() {
-        if (this.length == 0) {
+        if (!this.isDir && this.length == 0) {
             return 0;
         } else {
             final FatFileSystem fs = getFatFileSystem();

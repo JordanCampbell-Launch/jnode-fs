@@ -44,6 +44,7 @@ public class FatLfnDirectory extends FatDirectory {
      */
     public FatLfnDirectory(FatFileSystem fs, FatFile file) throws IOException {
         super(fs, file);
+        read();
     }
 
     // for root
